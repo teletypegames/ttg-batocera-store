@@ -1,0 +1,39 @@
+{
+  "store": {
+    "id": "ttg",
+    "name": "Teletype Games",
+    "base_url": "https://teletypegames.org",
+    "api": {
+      "catalog": "/api/software",
+      "download": "/api/download"
+    }
+  },
+
+  "paths": {
+    "roms_root": "/userdata/roms",
+    "subfolder": "teletypegames"
+  },
+
+  "emulationstation": {
+    "folder_name": "Teletype Games",
+    "restart": true
+  },
+
+  "catalog": {
+    "statuses": ["released", "archived"],
+    "owner_id": null,
+    "only": [],
+    "exclude": []
+  },
+
+  "platforms": {
+    "c64": { "system": "c64", "kind": "cartridge", "ext": ".prg", "enabled": true },
+    "tic80": { "system": "tic80", "kind": "cartridge", "ext": ".tic", "enabled": true }
+  },
+
+  "behavior": {
+    "prune": true,
+    "timeout": 30,
+    "insecure": false
+  }
+}
