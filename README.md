@@ -10,6 +10,10 @@ installer. All the logic lives in the shared engine,
 which works with any WarpEngine-based site; this is just the Teletype Games
 configuration of it.
 
+For RetroArch rather than a Batocera box — desktop, Android, Steam Deck — the
+same catalog is served by
+[`ttg-retroarch-store`](https://git.teletypegames.org/tools/ttg-retroarch-store).
+
 ## Install
 
 Straight onto the device:
@@ -119,7 +123,7 @@ becomes the default.
 /userdata/system/batocera-store/
 ├── ttg-store                            launcher
 └── ttg/
-    ├── store.py, config.json
+    ├── store.py, warpstore.py, config.json
     └── state.json, catalog.json, store.log
 
 /userdata/roms/c64/teletypegames/        blessingofra-2.0.0.prg, rabbit-1.0.0.prg, …
