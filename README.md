@@ -4,22 +4,22 @@ Puts the <https://teletypegames.org> catalog into a Batocera box's ROM folders,
 with EmulationStation metadata and box art. Triggered from the **Ports** menu on
 the device, or from the CLI over SSH.
 
-This repository is only the store definition — `config.json` plus a wrapper
-installer. All the logic lives in the shared engine,
-[`warp-engine-batocera-store`](https://git.teletypegames.org/tools/warp-engine-batocera-store),
+This repository is only the store definition — `config.json` plus the two wrapper
+scripts. All the logic lives in the shared engine,
+[`warp-engine-batocera-store`](https://git.teletypegames.org/stores/warp-engine-batocera-store),
 which works with any WarpEngine-based site; this is just the Teletype Games
 configuration of it.
 
 For RetroArch rather than a Batocera box — desktop, Android, Steam Deck — the
 same catalog is served by
-[`ttg-retroarch-store`](https://git.teletypegames.org/tools/ttg-retroarch-store).
+[`ttg-retroarch-store`](https://git.teletypegames.org/stores/ttg-retroarch-store).
 
 ## Install
 
 Straight onto the device:
 
 ```sh
-curl -fsSL https://git.teletypegames.org/tools/ttg-batocera-store/raw/branch/master/install.sh | bash
+curl -fsSL https://git.teletypegames.org/stores/ttg-batocera-store/raw/branch/master/install.sh | sh
 ```
 
 Or from a checkout of this repo:
@@ -54,6 +54,27 @@ $S config               # effective configuration
 ```
 
 Global flags go before the subcommand: `$S --roms-root /tmp/roms sync`.
+
+## Uninstall
+
+```sh
+curl -fsSL https://git.teletypegames.org/stores/ttg-batocera-store/raw/branch/master/uninstall.sh | sh
+```
+
+Or `/tmp/ttg-batocera-store/uninstall.sh` from a checkout on the box. It takes
+out the games — including any unpacked Ports payload — our gamelist entries, the
+*Teletype Games* Ports entry, the launcher and the store home, and restarts
+EmulationStation.
+
+```sh
+DRY_RUN=1 ./uninstall.sh     # show what would go, remove nothing
+KEEP_HOME=1 ./uninstall.sh   # keep state.json and the log, for a reinstall
+```
+
+Nothing of yours goes with it: your own ROMs keep their folders, and your
+gamelists are rewritten without our nodes rather than deleted — play counts and
+favourites survive. The `gamelist.xml.ttg-backup` copies are listed and left
+alone.
 
 ## What this store installs
 
@@ -131,11 +152,3 @@ becomes the default.
 /userdata/roms/c64/gamelist.xml          our entries merged in
 /userdata/roms/ports/Teletype Games Store.sh
 ```
-
-## Upgrading from the pre-split `batocera-store`
-
-The old repo installed everything into `/userdata/system/ttg-store`. Re-running
-the install command above migrates it: `state.json` is carried over, the old
-directory is renamed to `ttg-store.pre-split`, and the Ports entry is replaced
-in place. The ROMs themselves never move, so nothing is re-downloaded. Delete
-`/userdata/system/ttg-store.pre-split` once the new install looks right.
