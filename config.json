@@ -28,7 +28,20 @@
 
   "platforms": {
     "c64": { "system": "c64", "kind": "cartridge", "ext": ".prg", "enabled": true },
-    "tic80": { "system": "tic80", "kind": "cartridge", "ext": ".tic", "enabled": true }
+    "tic80": { "system": "tic80", "kind": "cartridge", "ext": ".tic", "enabled": true },
+
+    "ebitengine": { "system": "ports", "install": "port",
+                    "kind": { "x86_64": "linux_x64", "aarch64": "linux_arm64" },
+                    "ext": ".zip", "enabled": true },
+    "bevy": { "system": "ports", "install": "port",
+              "kind": { "x86_64": "linux_x64", "aarch64": "linux_arm64" },
+              "ext": ".zip", "enabled": true },
+    "godot": { "system": "ports", "install": "port",
+               "kind": { "x86_64": "linux_x64" },
+               "ext": ".zip", "enabled": true },
+    "love": { "system": "ports", "install": "port",
+              "kind": { "x86_64": "linux_x64" },
+              "ext": ".zip", "enabled": true }
   },
 
   "behavior": {

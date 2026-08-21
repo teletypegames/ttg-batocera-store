@@ -78,10 +78,16 @@ alone.
 
 ## What this store installs
 
+Cartridges go to their emulator's ROM folder, native builds to **Ports**:
+
 | Catalog platform | Asset kind | Batocera system | Extension |
 | --- | --- | --- | --- |
 | `c64` | `cartridge` | `c64` (VICE) | `.prg` |
 | `tic80` | `cartridge` | `tic80` | `.tic` |
+| `ebitengine` | `linux_x64` / `linux_arm64` | `ports` | `.zip` |
+| `bevy` | `linux_x64` / `linux_arm64` | `ports` | `.zip` |
+| `godot` | `linux_x64` | `ports` | `.zip` |
+| `love` | `linux_x64` | `ports` | `.zip` |
 
 Statuses `released` and `archived`, whole catalog, no owner filter. Everything
 lands under the `teletypegames/` subfolder of each system, so a prune can never
@@ -89,54 +95,39 @@ reach ROMs you put there yourself. To change any of it, edit
 `/userdata/system/batocera-store/ttg/config.json` on the box — the full key
 reference is in the engine's README.
 
-## Native games as Ports — experimental
+## Native games as Ports
 
-Cartridges are all this store installs by default, which is a little under half
-the catalog: the rest of our games are native builds, and an emulator cannot
-boot those. The engine can install them through Batocera's **Ports** system
-instead, but it is off here on purpose — **nobody has yet confirmed on real
-hardware that the games start**, and each one is a 30–100 MB download rather
-than a few kilobytes.
+Cartridges are a little under half the catalog; the rest of our games are native
+Linux builds, and no emulator boots those. Batocera runs Linux, so they are
+installed through its **Ports** system instead: the zip is unpacked under
+`ports/.data/teletypegames/`, and the launcher EmulationStation lists is
+`ports/teletypegames/<name>.sh`, which `cd`s into the program's directory before
+running it. They appear under *Ports ▸ Teletype Games*, and `remove` takes the
+unpacked program with it.
 
-To try it, add platform entries to
-`/userdata/system/batocera-store/ttg/config.json` on the box:
+Each one is a 30–100 MB download rather than the few kilobytes of a cartridge.
 
-```json
-"platforms": {
-  "ebitengine": {
-    "system": "ports",
-    "install": "port",
-    "kind": { "x86_64": "linux_x64", "aarch64": "linux_arm64" },
-    "ext": ".zip",
-    "enabled": true
-  },
-  "godot": { "system": "ports", "install": "port",
-             "kind": { "x86_64": "linux_x64" }, "ext": ".zip", "enabled": true },
-  "love":  { "system": "ports", "install": "port",
-             "kind": { "x86_64": "linux_x64" }, "ext": ".zip", "enabled": true },
-  "bevy":  { "system": "ports", "install": "port",
-             "kind": { "x86_64": "linux_x64", "aarch64": "linux_arm64" },
-             "ext": ".zip", "enabled": true }
-}
+**The build has to match the box.** Batocera runs on x86_64 mini-PCs as much as
+on the Raspberry Pi and the ARM handhelds, and a native binary only starts on the
+architecture it was built for. The engine detects the architecture — `list` and
+`config` both report it — and picks the asset for it; where there is none the
+title is skipped with a message naming the architecture, rather than installing
+something that cannot start:
+
+```
+skipped rabbitroller: no 'linux_arm64' asset in any release
 ```
 
-Then `/userdata/system/batocera-store/ttg-store sync`. The games appear under
-*Ports ▸ Teletype Games*; `remove` takes the unpacked program with it.
+`ebitengine` and `bevy` build for both `linux_x64` and `linux_arm64`; `godot` and
+`love` are x86_64-only for now — a Godot ARM export needs a preset in the game
+repo, and LÖVE has no upstream ARM runtime. `tic80` has an ARM problem too, but
+it is installed as a cartridge, which is data for an emulator and runs anywhere.
+`phaser` ships only a web build, so it is not mapped at all.
 
-**Mind the architecture.** Only the platforms listed with an `aarch64` entry
-above have ARM builds today — on a Raspberry Pi or a handheld the others are
-skipped with a message naming the architecture, rather than installing something
-that cannot start. `godot`, `love` and `tic80` have no ARM build at all yet: a
-Godot ARM export needs a preset in the game repo, LÖVE has no upstream ARM
-runtime, and TIC-80's exporter has no ARM target.
-
-With everything that can be enabled turned on, the coverage measured on
-2026-08-17 was **13 of 15** titles on x86_64 and **9 of 15** on ARM. The two that
-stay out either way are `phaserdemo` and `trickster-tiles`: they ship only a web
-build.
-
-Report back what happens on a real box — that is the missing piece before this
-becomes the default.
+Statuses still apply, and they are what keeps this small today: most of our
+native titles are `demo`, which is not in `catalog.statuses`. On x86_64 the only
+native game that currently installs is `rabbitroller`. Add `"demo"` to
+`catalog.statuses` on the box to get the rest.
 
 ## Where things land
 
@@ -150,5 +141,9 @@ becomes the default.
 /userdata/roms/c64/teletypegames/        blessingofra-2.0.0.prg, rabbit-1.0.0.prg, …
 /userdata/roms/c64/teletypegames/images/ blessingofra.png, …
 /userdata/roms/c64/gamelist.xml          our entries merged in
-/userdata/roms/ports/Teletype Games Store.sh
+
+/userdata/roms/ports/Teletype Games Store.sh        the store itself
+/userdata/roms/ports/teletypegames/          rabbitroller.sh, …
+/userdata/roms/ports/teletypegames/images/   rabbitroller.png, …
+/userdata/roms/ports/.data/teletypegames/    the unpacked programs
 ```
