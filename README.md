@@ -49,6 +49,15 @@ main carousel:  …  ▸  Teletype Games  ▸  ┌ Commodore 64
                                          └ Update Teletype Games    the sync
 ```
 
+The entry carries our own logo — the TTG mark, keyed out of
+[`media/TTG-Logo.png`](https://git.teletypegames.org/teletypegames/teletypegames)
+and shipped in this repository as `logo.png`, plus a vector `logo.svg` for the
+themes that only look for an SVG. The engine installs it into the logo folder of
+every theme on the box; a theme it cannot reach shows *TELETYPE GAMES* as text.
+Themes that came with the Batocera image live on the read-only system, so their
+copy is in the RAM overlay and goes away on a reboot — the next update puts it
+back, and `batocera-save-overlay` makes it permanent.
+
 Only the platforms that have something installed show up as folders, so the entry
 never has a dead end in it. The games are launched exactly as the box would
 launch them — the engine copies the launch command and the emulator list off the
@@ -96,7 +105,8 @@ curl -fsSL https://git.teletypegames.org/stores/ttg-batocera-store/raw/branch/ma
 
 Or `/tmp/ttg-batocera-store/uninstall.sh` from a checkout on the box. It takes
 out the games — including any unpacked port payload — our gamelists, the menu
-entry, the launcher and the store home, and restarts EmulationStation.
+entry, the logos it put in your themes, the launcher and the store home, and
+restarts EmulationStation.
 
 ```sh
 DRY_RUN=1 ./uninstall.sh     # show what would go, remove nothing
@@ -168,6 +178,7 @@ native game that currently installs is `rabbitroller`. Add `"demo"` to
     └── state.json, catalog.json, store.log
 
 /userdata/system/configs/emulationstation/es_systems_ttg.cfg   the menu entry
+<every theme>/<its logo folder>/ttg.png, ttg.svg                the entry's logo
 
 /userdata/roms/teletypegames/            the store's own ROM folder
 ├── c64/
