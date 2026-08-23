@@ -17,8 +17,11 @@
   "emulationstation": {
     "menu": {
       "mode": "system",
-      "theme": "ports",
-      "updater": true
+      "updater": true,
+      "logo": [
+        "https://git.teletypegames.org/stores/ttg-batocera-store/raw/branch/master/logo.png",
+        "https://git.teletypegames.org/stores/ttg-batocera-store/raw/branch/master/logo.svg"
+      ]
     },
     "restart": true
   },
