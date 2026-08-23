@@ -25,14 +25,15 @@ else
 fi
 export STORE_CONFIG ENGINE_RAW_BASE
 
-# Keep the Ports entry the box already has, so an upgrade replaces it in place.
-BATOCERA_PORT_NAME="${BATOCERA_PORT_NAME:-Teletype Games Store}"
-export BATOCERA_PORT_NAME
+# No Ports entry any more: the store has its own EmulationStation menu entry,
+# with the updater inside it. The engine takes the old Ports entry away on the
+# first sync after the upgrade.
 
 # --- migrate the pre-split ttg-store layout -------------------------------
-# Up to engine 1.x everything lived in /userdata/system/ttg-store. The ROMs
-# themselves do not move (the subfolder is still `teletypegames`), so carrying
-# state.json across is enough to avoid a full re-download.
+# Up to engine 1.x everything lived in /userdata/system/ttg-store. Carrying
+# state.json across is what lets the engine recognise what is installed — from
+# engine 4.0 on it uses that to take the old layout off the box before filling
+# /userdata/roms/teletypegames, the store's own folder.
 LEGACY_HOME="${LEGACY_STORE_HOME:-/userdata/system/ttg-store}"
 NEW_HOME="${BATOCERA_STORE_ROOT:-/userdata/system/batocera-store}/ttg"
 

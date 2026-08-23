@@ -15,7 +15,11 @@
   },
 
   "emulationstation": {
-    "folder_name": "Teletype Games",
+    "menu": {
+      "mode": "system",
+      "theme": "ports",
+      "updater": true
+    },
     "restart": true
   },
 

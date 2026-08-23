@@ -1,8 +1,9 @@
 # ttg-batocera-store — the Teletype Games store for Batocera
 
-Puts the <https://teletypegames.org> catalog into a Batocera box's ROM folders,
-with EmulationStation metadata and box art. Triggered from the **Ports** menu on
-the device, or from the CLI over SSH.
+Puts the <https://teletypegames.org> catalog on a Batocera box, with
+EmulationStation metadata and box art, under **its own menu entry**: *Teletype
+Games*, next to the box's own systems. Started from there on the device, or from
+the CLI over SSH.
 
 This repository is only the store definition — `config.json` plus the two wrapper
 scripts. All the logic lives in the shared engine,
@@ -30,15 +31,29 @@ ssh root@batocera /tmp/ttg-batocera-store/install.sh
 ```
 
 The installer fetches the engine, drops it and this config in
-`/userdata/system/batocera-store/ttg/`, writes the `ttg-store` launcher and the
-*Teletype Games Store* Ports entry, and runs the first sync. Restart
-EmulationStation (`batocera-es-swissknife --restart`) to see the games.
+`/userdata/system/batocera-store/ttg/`, writes the `ttg-store` launcher, and runs
+the first sync — which downloads the games and writes the menu entry. Restart
+EmulationStation (`batocera-es-swissknife --restart`) to see it.
 
 ## Use
 
-**On the device.** *Ports ▸ Teletype Games Store*. It downloads anything new,
-then restarts EmulationStation. Ports scripts get no console in Batocera, so the
-output goes to `/userdata/system/batocera-store/ttg/store.log`.
+**On the device.** *Teletype Games ▸ Store ▸ "Update Teletype Games"*. It
+downloads anything new, then restarts EmulationStation. ES gives a launched
+script no console, so the output goes to
+`/userdata/system/batocera-store/ttg/store.log`.
+
+```
+main carousel:  …  ▸  Teletype Games  ▸  ┌ Commodore 64
+                                         ├ TIC-80
+                                         ├ Ports          the native builds
+                                         └ Store          → "Update Teletype Games"
+```
+
+Only the platforms that have something installed show up as folders, so the entry
+never has a dead end in it. The games are launched exactly as the box would
+launch them — the engine copies the launch command and the emulator list off the
+box's own `c64`, `tic80` and `ports` systems, so whatever you configured for the
+C64 applies to our C64 games too.
 
 **Over SSH.**
 
@@ -46,14 +61,32 @@ output goes to `/userdata/system/batocera-store/ttg/store.log`.
 S=/userdata/system/batocera-store/ttg-store
 
 $S list                 # compatible catalog entries; * installed, ^ update available
-$S sync                 # download everything new, refresh gamelists
+$S sync                 # download everything new, refresh gamelists and the menu
 $S sync blessingofra    # just one title (never prunes)
 $S -n sync              # dry run
 $S remove c64demo       # uninstall
-$S config               # effective configuration
+$S config               # effective configuration, and where the menu entry lives
 ```
 
 Global flags go before the subcommand: `$S --roms-root /tmp/roms sync`.
+
+## Upgrading from a pre-4.0 install
+
+Older versions installed into the box's own systems — `c64/teletypegames/`,
+`tic80/teletypegames/`, `ports/teletypegames/` — and ran the sync from *Ports ▸
+Teletype Games Store*. The first sync after the upgrade moves all of that into
+`/userdata/roms/teletypegames/`, the store's own folder, by taking the old
+install off the box and downloading again. It also removes the old Ports entry:
+the updater now lives inside the menu entry.
+
+Nothing of yours goes with it: our nodes come out of your gamelists and the rest
+— your own games, their play counts and favourites — is written back untouched,
+and the `gamelist.xml.ttg-backup` copies are listed and left alone. Today's
+catalog is six cartridges and one native build, so the re-download is minutes.
+
+`-n sync` shows the whole thing without doing any of it. To stay on the old
+layout, set `emulationstation.menu.mode` to `merge` in
+`/userdata/system/batocera-store/ttg/config.json` before syncing.
 
 ## Uninstall
 
@@ -62,47 +95,43 @@ curl -fsSL https://git.teletypegames.org/stores/ttg-batocera-store/raw/branch/ma
 ```
 
 Or `/tmp/ttg-batocera-store/uninstall.sh` from a checkout on the box. It takes
-out the games — including any unpacked Ports payload — our gamelist entries, the
-*Teletype Games* Ports entry, the launcher and the store home, and restarts
-EmulationStation.
+out the games — including any unpacked port payload — our gamelists, the menu
+entry, the launcher and the store home, and restarts EmulationStation.
 
 ```sh
 DRY_RUN=1 ./uninstall.sh     # show what would go, remove nothing
 KEEP_HOME=1 ./uninstall.sh   # keep state.json and the log, for a reinstall
 ```
 
-Nothing of yours goes with it: your own ROMs keep their folders, and your
-gamelists are rewritten without our nodes rather than deleted — play counts and
-favourites survive. The `gamelist.xml.ttg-backup` copies are listed and left
-alone.
+Since everything the store installs lives in one folder of its own, an uninstall
+leaves the box exactly as it was: your own ROM folders are never touched.
 
 ## What this store installs
 
-Cartridges go to their emulator's ROM folder, native builds to **Ports**:
+Cartridges go to the folder of the system that boots them, native builds to a
+`ports` folder — all of them inside the store's own tree:
 
-| Catalog platform | Asset kind | Batocera system | Extension |
+| Catalog platform | Asset kind | Folder in the menu | Extension |
 | --- | --- | --- | --- |
-| `c64` | `cartridge` | `c64` (VICE) | `.prg` |
-| `tic80` | `cartridge` | `tic80` | `.tic` |
-| `ebitengine` | `linux_x64` / `linux_arm64` | `ports` | `.zip` |
-| `bevy` | `linux_x64` / `linux_arm64` | `ports` | `.zip` |
-| `godot` | `linux_x64` | `ports` | `.zip` |
-| `love` | `linux_x64` | `ports` | `.zip` |
+| `c64` | `cartridge` | Commodore 64 (VICE) | `.prg` |
+| `tic80` | `cartridge` | TIC-80 | `.tic` |
+| `ebitengine` | `linux_x64` / `linux_arm64` | Ports | `.zip` |
+| `bevy` | `linux_x64` / `linux_arm64` | Ports | `.zip` |
+| `godot` | `linux_x64` | Ports | `.zip` |
+| `love` | `linux_x64` | Ports | `.zip` |
 
-Statuses `released` and `archived`, whole catalog, no owner filter. Everything
-lands under the `teletypegames/` subfolder of each system, so a prune can never
-reach ROMs you put there yourself. To change any of it, edit
-`/userdata/system/batocera-store/ttg/config.json` on the box — the full key
-reference is in the engine's README.
+Statuses `released` and `archived`, whole catalog, no owner filter. To change any
+of it, edit `/userdata/system/batocera-store/ttg/config.json` on the box — the
+full key reference is in the engine's README.
 
 ## Native games as Ports
 
 Cartridges are a little under half the catalog; the rest of our games are native
 Linux builds, and no emulator boots those. Batocera runs Linux, so they are
-installed through its **Ports** system instead: the zip is unpacked under
-`ports/.data/teletypegames/`, and the launcher EmulationStation lists is
-`ports/teletypegames/<name>.sh`, which `cd`s into the program's directory before
-running it. They appear under *Ports ▸ Teletype Games*, and `remove` takes the
+installed the way its **Ports** system does it: the zip is unpacked under
+`teletypegames/ports/.data/`, and the launcher EmulationStation lists is
+`teletypegames/ports/<name>.sh`, which `cd`s into the program's directory before
+running it. They appear under *Teletype Games ▸ Ports*, and `remove` takes the
 unpacked program with it.
 
 Each one is a 30–100 MB download rather than the few kilobytes of a cartridge.
@@ -138,12 +167,20 @@ native game that currently installs is `rabbitroller`. Add `"demo"` to
     ├── store.py, warpstore.py, config.json
     └── state.json, catalog.json, store.log
 
-/userdata/roms/c64/teletypegames/        blessingofra-2.0.0.prg, rabbit-1.0.0.prg, …
-/userdata/roms/c64/teletypegames/images/ blessingofra.png, …
-/userdata/roms/c64/gamelist.xml          our entries merged in
+/userdata/system/configs/emulationstation/es_systems_ttg.cfg   the menu entry
 
-/userdata/roms/ports/Teletype Games Store.sh        the store itself
-/userdata/roms/ports/teletypegames/          rabbitroller.sh, …
-/userdata/roms/ports/teletypegames/images/   rabbitroller.png, …
-/userdata/roms/ports/.data/teletypegames/    the unpacked programs
+/userdata/roms/teletypegames/            the store's own ROM folder
+├── c64/
+│   ├── blessingofra-2.0.0.prg, rabbit-1.0.0.prg, …
+│   ├── images/blessingofra.png, …
+│   └── gamelist.xml
+├── tic80/
+│   └── …
+├── ports/
+│   ├── rabbitroller.sh, images/rabbitroller.png
+│   ├── .data/rabbitroller/              the unpacked program
+│   └── gamelist.xml
+└── store/
+    ├── update.sh                        the sync, as the menu starts it
+    └── gamelist.xml
 ```
