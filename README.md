@@ -37,7 +37,7 @@ EmulationStation (`batocera-es-swissknife --restart`) to see it.
 
 ## Use
 
-**On the device.** *Teletype Games ▸ Store ▸ "Update Teletype Games"*. It
+**On the device.** *Teletype Games ▸ "Update Teletype Games"*. It
 downloads anything new, then restarts EmulationStation. ES gives a launched
 script no console, so the output goes to
 `/userdata/system/batocera-store/ttg/store.log`.
@@ -45,8 +45,8 @@ script no console, so the output goes to
 ```
 main carousel:  …  ▸  Teletype Games  ▸  ┌ Commodore 64
                                          ├ TIC-80
-                                         ├ Ports          the native builds
-                                         └ Store          → "Update Teletype Games"
+                                         ├ Ports                    the native builds
+                                         └ Update Teletype Games    the sync
 ```
 
 Only the platforms that have something installed show up as folders, so the entry
@@ -180,7 +180,7 @@ native game that currently installs is `rabbitroller`. Add `"demo"` to
 │   ├── rabbitroller.sh, images/rabbitroller.png
 │   ├── .data/rabbitroller/              the unpacked program
 │   └── gamelist.xml
-└── store/
+└── store/                               the menu entry itself
     ├── update.sh                        the sync, as the menu starts it
     └── gamelist.xml
 ```
