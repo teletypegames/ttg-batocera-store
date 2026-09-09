@@ -35,6 +35,7 @@
 
   "platforms": {
     "c64": { "system": "c64", "kind": "cartridge", "ext": ".prg", "enabled": true },
+    "plus4": { "system": "cplus4", "kind": "cartridge", "ext": ".prg", "enabled": true },
     "tic80": { "system": "tic80", "kind": "cartridge", "ext": ".tic", "enabled": true },
 
     "ebitengine": { "system": "ports", "install": "port",

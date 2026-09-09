@@ -61,7 +61,7 @@ back, and `batocera-save-overlay` makes it permanent.
 Only the platforms that have something installed show up as folders, so the entry
 never has a dead end in it. The games are launched exactly as the box would
 launch them — the engine copies the launch command and the emulator list off the
-box's own `c64`, `tic80` and `ports` systems, so whatever you configured for the
+box's own `c64`, `cplus4`, `tic80` and `ports` systems, so whatever you configured for the
 C64 applies to our C64 games too.
 
 **Over SSH.**
@@ -124,6 +124,7 @@ Cartridges go to the folder of the system that boots them, native builds to a
 | Catalog platform | Asset kind | Folder in the menu | Extension |
 | --- | --- | --- | --- |
 | `c64` | `cartridge` | Commodore 64 (VICE) | `.prg` |
+| `plus4` | `cartridge` | Commodore Plus/4 (VICE) | `.prg` |
 | `tic80` | `cartridge` | TIC-80 | `.tic` |
 | `ebitengine` | `linux_x64` / `linux_arm64` | Ports | `.zip` |
 | `bevy` | `linux_x64` / `linux_arm64` | Ports | `.zip` |
