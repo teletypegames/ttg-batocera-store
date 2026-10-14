@@ -49,9 +49,8 @@ main carousel:  …  ▸  Teletype Games  ▸  ┌ Commodore 64
                                          └ Update Teletype Games    the sync
 ```
 
-The entry carries our own logo — the TTG mark, keyed out of
-[`media/TTG-Logo.png`](https://git.teletypegames.org/teletypegames/teletypegames)
-and shipped in this repository as `logo.png`, plus a vector `logo.svg` for the
+The entry carries our own logo — the TTG mark (`media/LOGOv2/TTG-Logo-Black`),
+shipped in this repository as `logo.png`, plus a pixel-exact `logo.svg` for the
 themes that only look for an SVG. The engine installs it into the logo folder of
 every theme on the box; a theme it cannot reach shows *TELETYPE GAMES* as text.
 Themes that came with the Batocera image live on the read-only system, so their
