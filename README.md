@@ -30,7 +30,10 @@ scp -r ttg-batocera-store root@batocera:/tmp/
 ssh root@batocera /tmp/ttg-batocera-store/install.sh
 ```
 
-The installer fetches the engine, drops it and this config in
+The installer fetches the engine — pinned to the commit of
+[`warp-engine-batocera-store`](https://git.teletypegames.org/stores/warp-engine-batocera-store)
+and of [`warpstore`](https://git.teletypegames.org/engines/warpstore) this config
+was tested with, set at the top of `install.sh` — drops it and this config in
 `/userdata/system/batocera-store/ttg/`, writes the `ttg-store` launcher, and runs
 the first sync — which downloads the games and writes the menu entry. Restart
 EmulationStation (`batocera-es-swissknife --restart`) to see it.
@@ -44,6 +47,7 @@ script no console, so the output goes to
 
 ```
 main carousel:  …  ▸  Teletype Games  ▸  ┌ Commodore 64
+                                         ├ Commodore Plus/4
                                          ├ TIC-80
                                          ├ Ports                    the native builds
                                          └ Update Teletype Games    the sync
@@ -54,8 +58,9 @@ shipped in this repository as `logo.png`, plus a pixel-exact `logo.svg` for the
 themes that only look for an SVG. The engine installs it into the logo folder of
 every theme on the box; a theme it cannot reach shows *TELETYPE GAMES* as text.
 Themes that came with the Batocera image live on the read-only system, so their
-copy is in the RAM overlay and goes away on a reboot — the next update puts it
-back, and `batocera-save-overlay` makes it permanent.
+copy is in the RAM overlay and would go away on a reboot; the engine adds a few
+lines to `/boot/postshare.sh` that put it back before EmulationStation starts,
+and the uninstall takes them out again.
 
 Only the platforms that have something installed show up as folders, so the entry
 never has a dead end in it. The games are launched exactly as the box would
@@ -72,7 +77,7 @@ $S list                 # compatible catalog entries; * installed, ^ update avai
 $S sync                 # download everything new, refresh gamelists and the menu
 $S sync blessingofra    # just one title (never prunes)
 $S -n sync              # dry run
-$S remove c64demo       # uninstall
+$S remove c64-demo      # uninstall
 $S config               # effective configuration, and where the menu entry lives
 ```
 
@@ -90,7 +95,7 @@ the updater now lives inside the menu entry.
 Nothing of yours goes with it: our nodes come out of your gamelists and the rest
 — your own games, their play counts and favourites — is written back untouched,
 and the `gamelist.xml.ttg-backup` copies are listed and left alone. Today's
-catalog is six cartridges and one native build, so the re-download is minutes.
+catalog is seven cartridges and one native build, so the re-download is minutes.
 
 `-n sync` shows the whole thing without doing any of it. To stay on the old
 layout, set `emulationstation.menu.mode` to `merge` in
@@ -182,9 +187,11 @@ native game that currently installs is `rabbitroller`. Add `"demo"` to
 
 /userdata/roms/teletypegames/            the store's own ROM folder
 ├── c64/
-│   ├── blessingofra-2.0.0.prg, rabbit-1.0.0.prg, …
+│   ├── blessingofra-2.2.0.prg, rabbit-1.0.0.prg, …
 │   ├── images/blessingofra.png, …
 │   └── gamelist.xml
+├── cplus4/
+│   └── …
 ├── tic80/
 │   └── …
 ├── ports/

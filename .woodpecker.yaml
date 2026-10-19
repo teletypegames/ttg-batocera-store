@@ -1,0 +1,19 @@
+# Lints the two wrapper scripts and checks config.json against the engine
+# install.sh pins (scripts/ci-check.sh). Nothing is deployed: the forge serves
+# the files straight from master.
+when:
+  - event: [push, manual]
+    branch: master
+  - event: pull_request
+
+steps:
+  - name: shellcheck
+    image: koalaman/shellcheck-alpine:v0.10.0
+    commands:
+      - shellcheck install.sh uninstall.sh scripts/ci-check.sh
+
+  - name: config
+    image: python:3.13.7-alpine3.22
+    commands:
+      - apk add --no-cache curl
+      - scripts/ci-check.sh
